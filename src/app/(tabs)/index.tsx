@@ -38,6 +38,8 @@ import {
 } from '@/constants/data';
 import { logger } from '@/utils/logger';
 
+import Feather from '@expo/vector-icons/Feather';
+
 // ─── Popular caterers (pre-resolved once) ──────────────────────
 const POPULAR = POPULAR_CATERER_IDS.map(
   (id) => CATERERS.find((c) => c.id === id)!,
@@ -157,11 +159,11 @@ export default function HomeScreen() {
                 <MonoLabel>Guests</MonoLabel>
                 <View style={styles.counterRow}>
                   <Pressable onPress={decGuests} style={styles.counterBtn}>
-                    <Text style={styles.counterBtnText}>−</Text>
+                    <Feather name="minus" size={16} color={EHColors.navy} />
                   </Pressable>
                   <Text style={styles.counterValue}>{guests}</Text>
                   <Pressable onPress={incGuests} style={styles.counterBtn}>
-                    <Text style={styles.counterBtnText}>+</Text>
+                    <Feather name="plus" size={16} color={EHColors.navy} />
                   </Pressable>
                 </View>
               </View>
@@ -196,7 +198,7 @@ export default function HomeScreen() {
               ]}
             >
               <Text style={styles.ctaText}>Find caterers</Text>
-              <Text style={styles.ctaArrow}>→</Text>
+              <Feather name="arrow-right" size={18} color={EHColors.white} />
             </Pressable>
           </View>
         </View>
