@@ -6,26 +6,11 @@
  */
 
 import { Tabs } from 'expo-router';
-import { StyleSheet, View, type ColorValue } from 'react-native';
+import { StyleSheet } from 'react-native';
+import Feather from '@expo/vector-icons/Feather';
 
 import { EHColors } from '@/constants/colors';
 import { logger } from '@/utils/logger';
-
-/** Simple geometric icon matching the prototype's tab bar shapes. */
-function TabIcon({ color, radius }: { color: string | ColorValue; radius: number }) {
-  return (
-    <View
-      style={[
-        styles.tabIcon,
-        {
-          borderColor: color,
-          borderRadius: radius,
-          backgroundColor: color === EHColors.copper ? color : 'transparent',
-        },
-      ]}
-    />
-  );
-}
 
 export default function TabLayout() {
   logger.debug('TabLayout rendered');
@@ -44,28 +29,28 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <TabIcon color={color} radius={6} />,
+          tabBarIcon: ({ color }) => <Feather name="home" size={20} color={color as string} />,
         }}
       />
       <Tabs.Screen
         name="browse"
         options={{
           title: 'Browse',
-          tabBarIcon: ({ color }) => <TabIcon color={color} radius={9} />,
+          tabBarIcon: ({ color }) => <Feather name="search" size={20} color={color as string} />,
         }}
       />
       <Tabs.Screen
         name="bookings"
         options={{
           title: 'Bookings',
-          tabBarIcon: ({ color }) => <TabIcon color={color} radius={3} />,
+          tabBarIcon: ({ color }) => <Feather name="calendar" size={20} color={color as string} />,
         }}
       />
       <Tabs.Screen
         name="vendor"
         options={{
           title: 'Vendor',
-          tabBarIcon: ({ color }) => <TabIcon color={color} radius={9} />,
+          tabBarIcon: ({ color }) => <Feather name="briefcase" size={20} color={color as string} />,
         }}
       />
     </Tabs>
@@ -83,10 +68,5 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 0.1,
-  },
-  tabIcon: {
-    width: 18,
-    height: 18,
-    borderWidth: 2,
   },
 });
