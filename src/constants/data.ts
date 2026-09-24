@@ -40,6 +40,19 @@ export const PRICE_CHIPS: PriceChip[] = [
   { label: '$18–25+', sub: 'Premium', band: '$18–25+' },
 ];
 
+export interface MenuPackage {
+  name: string;
+  price: string;
+  dishes: string;
+}
+
+export interface Review {
+  name: string;
+  stars: string;
+  meta: string;
+  text: string;
+}
+
 export interface Caterer {
   id: string;
   name: string;
@@ -54,6 +67,10 @@ export interface Caterer {
   photo: string;
   verified: boolean;
   booked: string | null;
+  about?: string;
+  gallery?: string[];
+  packages?: MenuPackage[];
+  reviewList?: Review[];
 }
 
 export const CATERERS: Caterer[] = [
@@ -71,6 +88,18 @@ export const CATERERS: Caterer[] = [
     photo: 'wedding buffet line',
     verified: true,
     booked: null,
+    about: 'Family-run since 2014. Weddings and church conferences from 80 to 400 plates, with our own generators, chafing dishes and a 14-person service team. Regulars at Borrowdale Country Club and Chapman Golf Club.',
+    gallery: ['plated main', 'buffet setup', 'beef stew pot', 'table styling'],
+    packages: [
+      { name: 'Classic Buffet', price: '$14 / head', dishes: 'Rice, sadza, roast chicken, beef stew, coleslaw, butternut, garden salad, seasonal fruit.' },
+      { name: 'Wedding Buffet', price: '$16.50 / head', dishes: 'Two starches, roast chicken, beef stew, oxtail, three salads, butternut, dessert table, juice station.' },
+      { name: 'Premium Banquet', price: '$20 / head', dishes: 'Carvery station, oxtail, grilled fish, lamb, four salads, cheese board, waiter-served dessert, mocktail bar.' }
+    ],
+    reviewList: [
+      { name: 'Rutendo M.', stars: '5.0', meta: 'Wedding · 260 guests · Nov 2026', text: 'Arrived at 8am, buffet was hot at 1pm sharp. Escrow meant I never had to hand over cash blind.' },
+      { name: 'Pastor Chikore', stars: '4.8', meta: 'Church conference · 400 guests · Sep 2026', text: 'Fed 400 people in under 40 minutes. Sadza was proper, not lukewarm.' },
+      { name: 'Anesu & Kuda', stars: '4.9', meta: 'Wedding · 180 guests · Aug 2026', text: 'Menu tasting was free and they adjusted for our vegetarian guests without a fuss.' }
+    ]
   },
   {
     id: 'sadza',

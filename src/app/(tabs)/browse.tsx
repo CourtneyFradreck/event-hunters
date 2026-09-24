@@ -135,7 +135,7 @@ export default function BrowseScreen() {
                 key={caterer.id}
                 caterer={caterer}
                 variant="full"
-                onPress={() => logger.debug(`Tapped caterer: ${caterer.name}`)}
+                onPress={() => router.push(`/caterer/${caterer.id}` as any)}
               />
             ))
           ) : (

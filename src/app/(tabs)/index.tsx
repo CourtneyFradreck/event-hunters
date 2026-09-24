@@ -11,6 +11,7 @@
  */
 
 import { useCallback, useState } from 'react';
+import { router } from 'expo-router';
 import {
   FlatList,
   Pressable,
@@ -265,7 +266,7 @@ export default function HomeScreen() {
             decelerationRate="fast"
             renderItem={({ item }) => (
               <View style={styles.carouselItem}>
-                <CatererCard caterer={item} />
+                <CatererCard caterer={item} onPress={() => router.push(`/caterer/${item.id}` as any)} />
               </View>
             )}
           />
