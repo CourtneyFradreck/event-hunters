@@ -1,56 +1,133 @@
-# Welcome to your Expo app 👋
+# EventHunters
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Book trusted caterers for your event, with your deposit protected.**
 
-## Get started
+EventHunters is a two-sided marketplace in Zimbabwe that connects event organisers with vetted chefs and catering companies. Its core idea is simple: in Zimbabwe's catering market, the biggest barrier isn't finding a caterer, it's trusting them with a deposit. EventHunters solves that with an **escrow-backed booking flow**, so organisers know their money is safe and caterers know the booking is real.
 
-1. Install dependencies
+> **Status:** Early development. The project has just been scaffolded, and nothing below is built yet unless ticked off in the [Roadmap](#roadmap).
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## The problem
 
-   ```bash
-   npx expo start
-   ```
+- Organisers struggle to know which caterers are reliable, and paying an upfront deposit to a stranger is risky.
+- Caterers lose bookings and time to informal, trust-based arrangements with no protection on either side.
 
-In the output, you'll find options to open the app in a
+## The solution
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+EventHunters sits between the two sides:
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+1. Organisers browse **vetted** caterers and send a booking request.
+2. The deposit is held in **escrow** rather than handed straight to the caterer.
+3. Funds are released to the caterer once the agreed terms are met.
 
-## Get a fresh project
+Revenue comes from a commission on bookings.
 
-When you're ready, run:
+## Planned features
+
+**For organisers**
+
+- Browse and search vetted chefs and catering companies
+- View caterer profiles, menus, and pricing (USD)
+- Request and confirm bookings
+- Pay deposits through an escrow-backed flow
+- Track booking status
+
+**For caterers**
+
+- Create a profile with menus and pricing
+- Receive and manage booking requests
+- Get paid securely once a booking is fulfilled
+
+**Platform**
+
+- Vetting and verification of caterers
+- Escrow-backed payments (local payment methods such as EcoCash in scope)
+- Location-aware discovery (Harare suburbs first)
+
+## Tech stack
+
+| Layer      | Choice                                                                         |
+| ---------- | ------------------------------------------------------------------------------ |
+| Mobile app | [Expo](https://expo.dev) + React Native (TypeScript)                           |
+| Navigation | [Expo Router](https://docs.expo.dev/router/introduction/) (file-based routing) |
+| Backend    | Firebase _(planned)_                                                           |
+| Payments   | Escrow flow with local payment methods _(planned)_                             |
+
+## Getting started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org) (LTS)
+- npm (or yarn/pnpm)
+- The [Expo Go](https://expo.dev/go) app on your phone, or an Android emulator / iOS simulator
+
+### Setup
 
 ```bash
-npm run reset-project
+# 1. Clone the repo
+git clone <your-repo-url>
+cd eventhunters
+
+# 2. Install dependencies
+npm install
+
+# 3. Start the dev server
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Then scan the QR code with Expo Go, or press `a` (Android emulator) / `i` (iOS simulator) in the terminal.
 
-### Other setup steps
+### Environment variables
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Copy the example file and fill in your own values:
 
-## Learn more
+```bash
+cp .env.example .env
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Never commit `.env` or any secrets. _(Add the `.env.example` file once the backend is wired up.)_
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Project structure
 
-## Join the community
+```
+eventhunters/
+├── app/            # Screens and routes (Expo Router)
+├── assets/         # Images, fonts, icons
+├── components/     # Reusable UI components
+├── constants/      # Colours, config, shared values
+├── hooks/          # Custom React hooks
+└── package.json
+```
 
-Join our community of developers creating universal apps.
+_This reflects the default Expo template and will change as the app grows._
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Roadmap
+
+- [x] Scaffold Expo project
+- [ ] Design system and core UI components
+- [ ] Authentication (organiser and caterer accounts)
+- [ ] Caterer profiles and listings
+- [ ] Search and discovery
+- [ ] Booking request flow
+- [ ] Escrow-backed deposit payments
+- [ ] Reviews and caterer verification
+- [ ] Pilot with a small group of founding caterers
+
+## Team
+
+- **Courtney Fradreck Taga**: technical co-founder
+- **[Co-founder name]**: co-founder and working chef
+
+## Contributing
+
+This is currently a private, founder-led project. If you'd like to get involved, please get in touch.
+
+## Contact
+
+- Email: courtaga@gmail.com
+- GitHub: [github.com/courtneyfradreck](https://github.com/courtneyfradreck)
+
+## License
+
+_To be decided._ All rights reserved until a licence is added.
