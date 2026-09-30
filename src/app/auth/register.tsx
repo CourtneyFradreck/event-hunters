@@ -5,16 +5,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
 
 import { EHColors } from '@/constants/colors';
+import { useAuth } from '@/context/AuthContext';
 
 export default function RegisterScreen() {
   const insets = useSafeAreaInsets();
+  const { login } = useAuth();
   const [role, setRole] = useState<'organiser' | 'caterer'>('organiser');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleRegister = () => {
-    // Mock registration -> push to tabs
+    login();
     router.replace('/(tabs)');
   };
 

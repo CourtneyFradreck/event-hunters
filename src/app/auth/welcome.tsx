@@ -3,9 +3,11 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EHColors } from '@/constants/colors';
+import { useAuth } from '@/context/AuthContext';
 
 export default function WelcomeScreen() {
   const insets = useSafeAreaInsets();
+  const { login } = useAuth();
 
   return (
     <View style={[styles.root, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
@@ -38,7 +40,10 @@ export default function WelcomeScreen() {
 
           <Pressable 
             style={styles.skipBtn} 
-            onPress={() => router.replace('/(tabs)')}
+            onPress={() => {
+              login();
+              router.replace('/(tabs)');
+            }}
           >
             <Text style={styles.skipBtnText}>Skip for now (Dev)</Text>
           </Pressable>

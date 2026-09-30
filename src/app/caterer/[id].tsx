@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View, Image } from 'react-native';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
@@ -53,9 +53,7 @@ export default function CatererProfileScreen() {
           >
             <Feather name="arrow-left" size={18} color={EHColors.navy} />
           </Pressable>
-          <View style={styles.photoLabelBox}>
-            <Text style={styles.photoLabelText}>{caterer.photo}</Text>
-          </View>
+          <Image source={{ uri: caterer.photo }} style={StyleSheet.absoluteFill} />
         </View>
 
         {/* ──────────────── GALLERY ──────────────── */}
@@ -67,11 +65,7 @@ export default function CatererProfileScreen() {
             style={styles.gallery}
           >
             {caterer.gallery.map((g, idx) => (
-              <View key={idx} style={styles.galleryItem}>
-                <View style={styles.galleryLabelBox}>
-                  <Text style={styles.galleryLabelText}>{g}</Text>
-                </View>
-              </View>
+              <View key={idx} style={[styles.galleryItem, { overflow: 'hidden' }]}><Image source={{ uri: g }} style={StyleSheet.absoluteFill} /></View>
             ))}
           </ScrollView>
         )}

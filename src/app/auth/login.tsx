@@ -5,14 +5,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
 
 import { EHColors } from '@/constants/colors';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginScreen() {
   const insets = useSafeAreaInsets();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Mock login -> push to tabs
+    login();
     router.replace('/(tabs)');
   };
 

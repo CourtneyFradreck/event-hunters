@@ -3,7 +3,7 @@
  * Shows a placeholder photo area, verified badge, name, suburb, price, and rating.
  */
 
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 import { EHColors } from '@/constants/colors';
@@ -31,12 +31,13 @@ export function CatererCard({ caterer, onPress, variant = 'compact' }: CatererCa
     >
       {/* Photo placeholder */}
       <View style={[styles.photoArea, isFull && styles.photoAreaFull]}>
+        <Image source={{ uri: caterer.photo }} style={StyleSheet.absoluteFill} />
         {caterer.booked && isFull && (
           <View style={styles.bookedBadge}>
             <Text style={styles.bookedText}>Booked {caterer.booked}</Text>
           </View>
         )}
-        <Text style={styles.photoLabel}>{caterer.photo}</Text>
+        {/* Removed text label since we have the real image now */}
         {caterer.verified && (
           <View style={styles.verifiedBadge}>
             <MaterialIcons name="verified" size={12} color={EHColors.white} />
