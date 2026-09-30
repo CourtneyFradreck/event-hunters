@@ -44,11 +44,14 @@ export default function ChatScreen() {
       style={[styles.root, { paddingBottom: insets.bottom }]} 
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Feather name="arrow-left" size={18} color={EHColors.white} />
-        </Pressable>
-        <Text style={styles.headerTitle}>{caterer.name}</Text>
+      <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
+        <View style={styles.headerContent}>
+          <Pressable onPress={() => router.back()} style={styles.backBtn}>
+            <Feather name="arrow-left" size={20} color={EHColors.ink} />
+          </Pressable>
+          <Text style={styles.headerTitle}>Chat</Text>
+          <View style={{ width: 40 }} />
+        </View>
       </View>
 
       <ScrollView 
@@ -95,20 +98,22 @@ export default function ChatScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: EHColors.pageBg },
-  header: {
-    backgroundColor: EHColors.navy,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 18,
-    paddingBottom: 16,
+  headerContainer: {
+    backgroundColor: EHColors.white,
+    borderBottomWidth: 1, borderBottomColor: EHColors.navyBorderLight,
+    paddingBottom: 12,
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 8 },
+      android: { elevation: 4 }
+    }),
+    zIndex: 10,
   },
-  backBtn: {
-    width: 34, height: 34, borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    alignItems: 'center', justifyContent: 'center',
-    marginRight: 12,
-  },
-  headerTitle: { fontSize: 16, fontWeight: '600', color: EHColors.white },
+  headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 12 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: EHColors.pageBg, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: EHColors.ink },
+  
+  
+  
   messagesList: { flex: 1 },
   messagesContent: { padding: 18, gap: 16, paddingBottom: 32 },
   messageBubble: {
