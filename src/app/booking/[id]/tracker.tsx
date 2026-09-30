@@ -23,7 +23,7 @@ export default function BookingTrackerScreen() {
   const currentStage = 3; 
 
   const handleChat = () => {
-    router.push(`/booking/${id}/chat`);
+    router.push(`/booking/${id}/chat` as any);
   };
 
   return (
@@ -85,7 +85,7 @@ export default function BookingTrackerScreen() {
 
         <Pressable 
           style={styles.actionBtn} 
-          onPress={() => router.push(`/booking/${id}/delivery`)}
+          onPress={() => router.push(`/booking/${id}/delivery` as any)}
         >
           <Text style={styles.actionBtnText}>Event Day Options</Text>
           <Feather name="arrow-right" size={18} color={EHColors.white} />
