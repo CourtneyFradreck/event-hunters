@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View, Image, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
 import { router } from 'expo-router';
 
 import { EHColors } from '@/constants/colors';
 import { EscrowIcon } from '@/components/ui/escrow-icon';
+import { CATERERS } from '@/constants/data';
 
 // Mock bookings data
 const MOCK_BOOKINGS = [
@@ -47,14 +48,14 @@ export default function BookingsScreen() {
 
   return (
     <View style={styles.root}>
-      {/* HEADER */}
-      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <View style={styles.headerTopRow}>
+      {/* WHITE FLOATING HEADER */}
+      <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
+        <View style={styles.headerContent}>
           <Text style={styles.headerTitle}>My Bookings</Text>
         </View>
 
-        {/* TABS */}
-        <View style={styles.tabsRow}>
+        {/* PILL TABS */}
+        <View style={styles.tabsContainer}>
           <Pressable
             onPress={() => setActiveTab('upcoming')}
             style={[styles.tabBtn, activeTab === 'upcoming' && styles.tabBtnActive]}
@@ -82,71 +83,86 @@ export default function BookingsScreen() {
       >
         {activeTab === 'upcoming' ? (
           <View style={styles.listContainer}>
-            {MOCK_BOOKINGS.map((booking) => (
-              <Pressable
-                key={booking.id}
-                onPress={() => {
-                  // If it's action_required, maybe route to compare or book?
-                  // For now we'll route to the book screen if they need to pay
-                  if (booking.status === 'action_required') {
-                    router.push(`/caterer/${booking.catererId}/book` as any);
-                  } else if (booking.status === 'escrow_held') {
-                    router.push(`/booking/${booking.catererId}/tracker` as any);
-                  } else {
-                    router.push(`/caterer/${booking.catererId}` as any);
-                  }
-                }}
-                style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-              >
-                <View style={styles.cardHeader}>
-                  <View style={styles.cardHeaderLeft}>
-                    <Text style={styles.catererName}>{booking.catererName}</Text>
-                    <Text style={styles.eventDetails}>
-                      {booking.eventType}  {booking.date}  {booking.guests} guests
-                    </Text>
+            {MOCK_BOOKINGS.map((booking) => {
+              const catererInfo = CATERERS.find(c => c.id === booking.catererId);
+              
+              return (
+                <Pressable
+                  key={booking.id}
+                  onPress={() => {
+                    if (booking.status === 'action_required') {
+                      router.push(`/caterer/${booking.catererId}/book` as any);
+                    } else if (booking.status === 'escrow_held') {
+                      router.push(`/booking/${booking.catererId}/tracker` as any);
+                    } else {
+                      router.push(`/caterer/${booking.catererId}` as any);
+                    }
+                  }}
+                  style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+                >
+                  <View style={styles.cardHeader}>
+                    {catererInfo?.photo && (
+                      <Image source={{ uri: catererInfo.photo }} style={styles.catererThumb} />
+                    )}
+                    <View style={styles.cardHeaderInfo}>
+                      <Text style={styles.catererName}>{booking.catererName}</Text>
+                      <Text style={styles.eventDetails}>
+                        {booking.eventType} • {booking.date}
+                      </Text>
+                      <Text style={styles.eventSubDetails}>{booking.guests} guests</Text>
+                    </View>
+                    <View style={styles.chevronBox}>
+                      <Feather name="chevron-right" size={20} color={EHColors.inkPlaceholder} />
+                    </View>
                   </View>
-                  <Feather name="chevron-right" size={20} color={EHColors.inkMuted} />
-                </View>
 
-                {/* Status Section */}
-                <View style={styles.statusBox}>
-                  {booking.status === 'action_required' && (
-                    <>
-                      <View style={[styles.statusTag, styles.statusTagCopper]}>
-                        <Text style={styles.statusTagCopperText}>Quote received</Text>
+                  <View style={styles.divider} />
+
+                  {/* Status Section */}
+                  <View style={styles.statusSection}>
+                    {booking.status === 'action_required' && (
+                      <View style={styles.statusRow}>
+                        <View style={[styles.iconCircle, { backgroundColor: EHColors.copperBg }]}>
+                          <Feather name="file-text" size={16} color={EHColors.copperDark} />
+                        </View>
+                        <View style={styles.statusTextCol}>
+                          <Text style={[styles.statusTitle, { color: EHColors.copperDark }]}>Quote Received</Text>
+                          <Text style={styles.statusDesc}>Deposit of <Text style={{ fontWeight: '700' }}>{booking.deposit}</Text> required to secure booking.</Text>
+                        </View>
                       </View>
-                      <Text style={styles.statusMessage}>
-                        Deposit of <Text style={{ fontWeight: '700' }}>{booking.deposit}</Text> required to secure this booking.
-                      </Text>
-                    </>
-                  )}
-                  {booking.status === 'pending_quote' && (
-                    <>
-                      <View style={[styles.statusTag, styles.statusTagNavy]}>
-                        <Text style={styles.statusTagNavyText}>Pending quote</Text>
+                    )}
+                    {booking.status === 'pending_quote' && (
+                      <View style={styles.statusRow}>
+                        <View style={[styles.iconCircle, { backgroundColor: '#F0F4F8' }]}>
+                          <Feather name="clock" size={16} color={EHColors.navySoft} />
+                        </View>
+                        <View style={styles.statusTextCol}>
+                          <Text style={[styles.statusTitle, { color: EHColors.navy }]}>Pending Quote</Text>
+                          <Text style={styles.statusDesc}>Waiting for caterer to respond.</Text>
+                        </View>
                       </View>
-                      <Text style={styles.statusMessage}>
-                        Waiting for caterer to respond to your request.
-                      </Text>
-                    </>
-                  )}
-                  {booking.status === 'escrow_held' && (
-                    <>
-                      <View style={[styles.statusTag, styles.statusTagGreen]}>
-                        <EscrowIcon size="small" />
-                        <Text style={[styles.statusTagGreenText, { marginLeft: 4 }]}>Deposit secured</Text>
+                    )}
+                    {booking.status === 'escrow_held' && (
+                      <View style={styles.statusRow}>
+                        <View style={[styles.iconCircle, { backgroundColor: EHColors.greenBg }]}>
+                          <EscrowIcon size="small" />
+                        </View>
+                        <View style={styles.statusTextCol}>
+                          <Text style={[styles.statusTitle, { color: EHColors.green }]}>Deposit Secured</Text>
+                          <Text style={styles.statusDesc}>{booking.deposit} held in escrow. Caterer locked in.</Text>
+                        </View>
                       </View>
-                      <Text style={styles.statusMessage}>
-                        {booking.deposit} held in escrow. Caterer locked in.
-                      </Text>
-                    </>
-                  )}
-                </View>
-              </Pressable>
-            ))}
+                    )}
+                  </View>
+                </Pressable>
+              );
+            })}
           </View>
         ) : (
           <View style={styles.emptyState}>
+            <View style={styles.emptyIconBox}>
+              <Feather name="calendar" size={32} color={EHColors.navyBorderMedium} />
+            </View>
             <Text style={styles.emptyTitle}>No past bookings</Text>
             <Text style={styles.emptyDesc}>Your completed events will appear here.</Text>
           </View>
@@ -157,143 +173,79 @@ export default function BookingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: EHColors.pageBg,
+  root: { flex: 1, backgroundColor: EHColors.pageBg },
+  
+  headerContainer: {
+    backgroundColor: EHColors.white,
+    borderBottomWidth: 1, borderBottomColor: EHColors.navyBorderLight,
+    paddingBottom: 16,
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 8 },
+      android: { elevation: 4 }
+    }),
+    zIndex: 10,
   },
-  header: {
-    backgroundColor: EHColors.navy,
+  headerContent: {
+    paddingHorizontal: 20, paddingTop: 12, paddingBottom: 16,
   },
-  headerTopRow: {
-    paddingHorizontal: 18,
-    paddingBottom: 20,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: EHColors.white,
-  },
-  tabsRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 18,
+  headerTitle: { fontSize: 28, fontWeight: '700', color: EHColors.ink },
+  
+  tabsContainer: {
+    flexDirection: 'row', backgroundColor: EHColors.pageBg,
+    marginHorizontal: 20, borderRadius: 24, padding: 4,
+    borderWidth: 1, borderColor: EHColors.navyBorderLight,
   },
   tabBtn: {
-    marginRight: 24,
-    paddingBottom: 12,
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
+    flex: 1, paddingVertical: 10, borderRadius: 20,
+    alignItems: 'center', justifyContent: 'center',
   },
   tabBtnActive: {
-    borderBottomColor: EHColors.copper,
+    backgroundColor: EHColors.white,
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
+      android: { elevation: 2 }
+    }),
   },
-  tabText: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: EHColors.navySoft,
-  },
-  tabTextActive: {
-    color: EHColors.white,
-    fontWeight: '600',
-  },
-  scroll: {
-    flex: 1,
-  },
-  listContainer: {
-    paddingHorizontal: 18,
-    gap: 16,
-  },
+  tabText: { fontSize: 14, fontWeight: '600', color: EHColors.inkSecondary },
+  tabTextActive: { color: EHColors.ink },
+
+  scroll: { flex: 1 },
+  listContainer: { paddingHorizontal: 20, gap: 16 },
+  
   card: {
     backgroundColor: EHColors.white,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: EHColors.navyBorder,
-    shadowColor: EHColors.navyShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderRadius: 20,
+    borderWidth: 1, borderColor: EHColors.navyBorderLight,
+    ...Platform.select({
+      ios: { shadowColor: EHColors.navyShadow, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 12 },
+      android: { elevation: 3 }
+    }),
   },
-  cardPressed: {
-    backgroundColor: EHColors.sandWarm,
-  },
+  cardPressed: { backgroundColor: EHColors.sandBg },
+  
   cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 16,
+    flexDirection: 'row', alignItems: 'center', padding: 16,
   },
-  cardHeaderLeft: {
-    flex: 1,
-    paddingRight: 12,
+  catererThumb: {
+    width: 60, height: 60, borderRadius: 16, marginRight: 16, backgroundColor: EHColors.sandDark,
   },
-  catererName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: EHColors.ink,
-    marginBottom: 4,
-  },
-  eventDetails: {
-    fontSize: 13,
-    color: EHColors.inkMuted,
-  },
-  statusBox: {
-    backgroundColor: EHColors.sandBg,
-    borderRadius: 12,
-    padding: 12,
-    alignItems: 'flex-start',
-  },
-  statusTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginBottom: 8,
-  },
-  statusTagCopper: {
-    backgroundColor: EHColors.copperBg,
-  },
-  statusTagCopperText: {
-    color: EHColors.copperDark,
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  statusTagNavy: {
-    backgroundColor: '#E5ECF2',
-  },
-  statusTagNavyText: {
-    color: EHColors.navy,
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  statusTagGreen: {
-    backgroundColor: EHColors.greenBg,
-  },
-  statusTagGreenText: {
-    color: EHColors.green,
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  statusMessage: {
-    fontSize: 13,
-    color: EHColors.inkSecondary,
-    lineHeight: 18,
-  },
-  emptyState: {
-    paddingTop: 40,
-    alignItems: 'center',
-    paddingHorizontal: 32,
-  },
-  emptyTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: EHColors.ink,
-    marginBottom: 8,
-  },
-  emptyDesc: {
-    fontSize: 14,
-    color: EHColors.inkMuted,
-    textAlign: 'center',
-  },
+  cardHeaderInfo: { flex: 1, justifyContent: 'center' },
+  catererName: { fontSize: 16, fontWeight: '700', color: EHColors.ink, marginBottom: 4 },
+  eventDetails: { fontSize: 13, color: EHColors.inkSecondary, fontWeight: '500' },
+  eventSubDetails: { fontSize: 13, color: EHColors.inkMuted, marginTop: 2 },
+  chevronBox: { paddingLeft: 8 },
+
+  divider: { height: 1, backgroundColor: EHColors.navyBorderLight, marginHorizontal: 16 },
+
+  statusSection: { padding: 16 },
+  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  iconCircle: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  statusTextCol: { flex: 1 },
+  statusTitle: { fontSize: 14, fontWeight: '700', marginBottom: 2 },
+  statusDesc: { fontSize: 13, color: EHColors.inkSecondary, lineHeight: 18 },
+
+  emptyState: { paddingTop: 64, alignItems: 'center', paddingHorizontal: 32 },
+  emptyIconBox: { width: 64, height: 64, borderRadius: 32, backgroundColor: EHColors.white, alignItems: 'center', justifyContent: 'center', marginBottom: 16, borderWidth: 1, borderColor: EHColors.navyBorderLight },
+  emptyTitle: { fontSize: 18, fontWeight: '700', color: EHColors.ink, marginBottom: 8 },
+  emptyDesc: { fontSize: 15, color: EHColors.inkMuted, textAlign: 'center' },
 });
