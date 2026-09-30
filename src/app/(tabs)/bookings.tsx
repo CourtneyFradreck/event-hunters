@@ -90,6 +90,8 @@ export default function BookingsScreen() {
                   // For now we'll route to the book screen if they need to pay
                   if (booking.status === 'action_required') {
                     router.push(`/caterer/${booking.catererId}/book` as any);
+                  } else if (booking.status === 'escrow_held') {
+                    router.push(`/booking/${booking.catererId}/tracker` as any);
                   } else {
                     router.push(`/caterer/${booking.catererId}` as any);
                   }
