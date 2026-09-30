@@ -8,43 +8,12 @@ import { EHColors } from '@/constants/colors';
 import { EscrowIcon } from '@/components/ui/escrow-icon';
 import { CATERERS } from '@/constants/data';
 
-// Mock bookings data
-const MOCK_BOOKINGS = [
-  {
-    id: 'b1',
-    catererId: 'zuva',
-    catererName: 'Zuva Feast Catering',
-    eventType: 'Wedding',
-    date: '14 Dec 2026',
-    guests: 220,
-    status: 'action_required',
-    amount: '$3,630',
-    deposit: '$1,089',
-  },
-  {
-    id: 'b3',
-    catererId: 'sadza',
-    catererName: 'Sadza & Sage',
-    eventType: 'Kitchen Party',
-    date: '10 Nov 2026',
-    guests: 80,
-    status: 'escrow_held',
-    deposit: '$320',
-  },
-  {
-    id: 'b2',
-    catererId: 'table',
-    catererName: 'The Harare Table',
-    eventType: 'Corporate',
-    date: '21 Dec 2026',
-    guests: 50,
-    status: 'pending_quote',
-  },
-];
+import { useBookingsStore } from '@/store/useBookingsStore';
 
 export default function BookingsScreen() {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
+  const bookings = useBookingsStore((state) => state.bookings);
 
   return (
     <View style={styles.root}>
@@ -83,7 +52,7 @@ export default function BookingsScreen() {
       >
         {activeTab === 'upcoming' ? (
           <View style={styles.listContainer}>
-            {MOCK_BOOKINGS.map((booking) => {
+            {bookings.map((booking) => {
               const catererInfo = CATERERS.find(c => c.id === booking.catererId);
               
               return (

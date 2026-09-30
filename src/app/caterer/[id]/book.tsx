@@ -9,10 +9,13 @@ import { CATERERS } from '@/constants/data';
 import { EscrowIcon } from '@/components/ui/escrow-icon';
 import { logger } from '@/utils/logger';
 
+import { useBookingsStore } from '@/store/useBookingsStore';
+
 export default function BookingConfirmScreen() {
   const { id } = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const caterer = CATERERS.find((c) => c.id === id) || CATERERS[0];
+  const payDeposit = useBookingsStore(state => state.payDeposit);
 
   const [paymentMethod, setPaymentMethod] = useState<'ecocash' | 'card'>('ecocash');
 
@@ -38,7 +41,8 @@ export default function BookingConfirmScreen() {
   ];
 
   const handlePay = () => {
-    logger.debug('Paid deposit via', paymentMethod);
+    logger.debug('Paid deposit via', { paymentMethod });
+    payDeposit('b1', paymentMethod); // Assuming 'b1' is the active quote for Zuva
     router.replace('/(tabs)/bookings' as any);
   };
 

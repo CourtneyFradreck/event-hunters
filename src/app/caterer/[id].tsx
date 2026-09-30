@@ -7,6 +7,8 @@ import { EHColors } from '@/constants/colors';
 import { CATERERS } from '@/constants/data';
 import { EscrowIcon } from '@/components/ui/escrow-icon';
 
+import Animated, { FadeInDown } from 'react-native-reanimated';
+
 export default function CatererProfileScreen() {
   const { id } = useLocalSearchParams();
   const caterer = CATERERS.find((c) => c.id === id) || CATERERS[0];
@@ -63,7 +65,7 @@ export default function CatererProfileScreen() {
         )}
 
         {/* INFO BLOCK */}
-        <View style={styles.content}>
+        <Animated.View style={styles.content} entering={FadeInDown.duration(400).delay(100)}>
           <View style={styles.headerRow}>
             <View style={styles.headerLeft}>
               <Text style={styles.title}>{caterer.name}</Text>
@@ -165,7 +167,7 @@ export default function CatererProfileScreen() {
             </View>
           </View>
 
-        </View>
+        </Animated.View>
       </ScrollView>
 
       {/* BOTTOM ACTION BAR */}
