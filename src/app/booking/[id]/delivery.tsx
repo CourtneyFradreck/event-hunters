@@ -16,11 +16,11 @@ export default function ConfirmDeliveryScreen() {
   const deposit = '$1,089';
 
   const handleConfirm = () => {
-    router.push(`/booking/${id}/rate`);
+    router.push(`/booking/${id}/rate` as any);
   };
 
   const handleDispute = () => {
-    router.push(`/booking/${id}/dispute`);
+    router.push(`/booking/${id}/dispute` as any);
   };
 
   return (
@@ -45,7 +45,7 @@ export default function ConfirmDeliveryScreen() {
 
         <Text style={styles.title}>Did everything go as agreed?</Text>
         <Text style={styles.message}>
-          <Text style={styles.bold}>{caterer.name}</Text> marked the event as delivered. Confirm and we release the escrow ?" or raise a dispute and it stays locked.
+          <Text style={styles.bold}>{caterer.name}</Text> marked the event as delivered. Confirm and we release the escrow &mdash; or raise a dispute and it stays locked.
         </Text>
 
         <View style={styles.actions}>

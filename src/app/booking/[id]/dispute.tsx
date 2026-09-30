@@ -7,7 +7,6 @@ import Feather from '@expo/vector-icons/Feather';
 import { EHColors } from '@/constants/colors';
 
 export default function DisputeScreen() {
-  const { id } = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const [reason, setReason] = useState('');
 
