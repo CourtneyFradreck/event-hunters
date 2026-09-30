@@ -14,7 +14,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    login();
+    login('organiser');
     router.replace('/(tabs)');
   };
 

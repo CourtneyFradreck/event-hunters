@@ -41,11 +41,11 @@ export default function WelcomeScreen() {
           <Pressable 
             style={styles.skipBtn} 
             onPress={() => {
-              login();
+              login('caterer');
               router.replace('/(tabs)');
             }}
           >
-            <Text style={styles.skipBtnText}>Skip for now (Dev)</Text>
+            <Text style={styles.skipBtnText}>Skip for now (Dev: Caterer)</Text>
           </Pressable>
         </View>
       </View>

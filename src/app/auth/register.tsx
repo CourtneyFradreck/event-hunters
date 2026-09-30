@@ -16,7 +16,7 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
 
   const handleRegister = () => {
-    login();
+    login(role);
     router.replace('/(tabs)');
   };
 
