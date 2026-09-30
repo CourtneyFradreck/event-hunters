@@ -17,6 +17,7 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "package": "com.courtneycodes.eventhunters",
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -37,6 +38,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8567ca6f-2fe2-48e5-98cf-e012d333c931"
+      }
     }
   }
 }
