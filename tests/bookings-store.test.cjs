@@ -42,6 +42,7 @@ test('one booking survives the complete two-sided lifecycle, chat, and withdrawa
   const id = store.getState().requestQuote('zuva', brief);
   assert.ok(id);
   assert.equal(store.getState().sendQuote(id, quote), true);
+  assert.equal(store.getState().sendQuote(id, quote), false);
   let booking = store.getState().bookings.find(b => b.id === id);
   assert.equal(booking.quote.total, 2160);
   assert.equal(booking.quote.deposit, 648);

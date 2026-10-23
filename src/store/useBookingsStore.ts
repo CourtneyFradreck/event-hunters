@@ -66,6 +66,9 @@ export const useBookingsStore = create<BookingsStore>((set, get) => {
     sendQuote: (id, draft) => {
       const booking = get().bookings.find(item => item.id === id);
       if (!booking || booking.catererId !== get().vendorProfile.id || !validQuote(booking.guests, draft)) return false;
+      if (booking.quote && booking.quote.packageName === draft.packageName
+        && booking.quote.validUntil === draft.validUntil && booking.quote.note === draft.note
+        && JSON.stringify(booking.quote.items) === JSON.stringify(draft.items)) return false;
       return transition(id, ['requested', 'quoted', 'awaiting_deposit'], 'quoted', 'Quote Sent',
         { quote: calculateQuote(booking.guests, draft) });
     },
