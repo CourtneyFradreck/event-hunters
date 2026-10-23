@@ -17,7 +17,6 @@ export default function RegisterScreen() {
 
   const handleRegister = () => {
     login(role);
-    router.replace('/(tabs)');
   };
 
   return (

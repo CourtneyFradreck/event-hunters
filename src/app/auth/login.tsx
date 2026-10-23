@@ -9,13 +9,12 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function LoginScreen() {
   const insets = useSafeAreaInsets();
-  const { login } = useAuth();
+  const { login, role } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    login('organiser');
-    router.replace('/(tabs)');
+    login(role);
   };
 
   return (

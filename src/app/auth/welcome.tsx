@@ -42,7 +42,6 @@ export default function WelcomeScreen() {
             style={styles.skipBtn} 
             onPress={() => {
               login('caterer');
-              router.replace('/(tabs)');
             }}
           >
             <Text style={styles.skipBtnText}>Skip for now (Dev: Caterer)</Text>

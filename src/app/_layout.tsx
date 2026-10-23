@@ -7,16 +7,20 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 
 function RootLayoutNav() {
   const segments = useSegments();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, role } = useAuth();
 
   useEffect(() => {
-    // If we're not authenticated and not currently in the auth group, redirect to welcome
-    if (!isAuthenticated && segments[0] !== 'auth') {
-      setTimeout(() => {
-        router.replace('/auth/welcome' as any);
-      }, 0);
+    const inAuth = segments[0] === 'auth';
+    const inWrongDashboard = role === 'caterer'
+      ? segments[0] === '(tabs)'
+      : segments[0] === 'vendor';
+
+    if (!isAuthenticated && !inAuth) {
+      router.replace('/auth/welcome');
+    } else if (isAuthenticated && (inAuth || inWrongDashboard)) {
+      router.replace(role === 'caterer' ? '/vendor' : '/(tabs)');
     }
-  }, [isAuthenticated, segments]);
+  }, [isAuthenticated, role, segments]);
 
   return (
     <>
@@ -27,6 +31,7 @@ function RootLayoutNav() {
         }}
       >
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="vendor/index" />
         <Stack.Screen name="auth" />
         <Stack.Screen name="+not-found" />
       </Stack>

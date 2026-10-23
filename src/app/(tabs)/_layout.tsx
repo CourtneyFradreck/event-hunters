@@ -1,7 +1,7 @@
 /**
  * Tab bar layout — matches the prototype's bottom navigation.
  *
- * 4 tabs: Home, Browse, Bookings, Vendor.
+ * 4 tabs: Home, Browse, Bookings, Account.
  * Uses simple View-based icons to match the prototype's geometric shapes.
  */
 
