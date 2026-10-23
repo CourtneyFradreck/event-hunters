@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 
 import { CatererCard } from '@/components/ui/caterer-card';
 import { EHColors } from '@/constants/colors';
-import { CATERERS } from '@/constants/data';
+import { useCaterers } from '@/hooks/use-caterers';
 import { logger } from '@/utils/logger';
 
 const CATEGORY_CHIPS = [
@@ -19,19 +19,21 @@ const CATEGORY_CHIPS = [
 
 export default function BrowseScreen() {
   const insets = useSafeAreaInsets();
+  const caterers = useCaterers();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredCaterers = CATERERS.filter((caterer) => {
+  const filteredCaterers = caterers.filter((caterer) => {
     // Basic mock filtering
     const matchesSearch = caterer.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          caterer.cuisine.toLowerCase().includes(searchQuery.toLowerCase());
+                          caterer.cuisine.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          caterer.suburb.toLowerCase().includes(searchQuery.toLowerCase());
     
     if (activeCategory === 'all') return matchesSearch;
     if (activeCategory === 'verified') return matchesSearch && caterer.verified;
     if (activeCategory === 'wedding') return matchesSearch && caterer.about?.toLowerCase().includes('wedding');
     if (activeCategory === 'corporate') return matchesSearch && caterer.about?.toLowerCase().includes('corporate');
-    if (activeCategory === 'braai') return matchesSearch && caterer.cuisine.toLowerCase().includes('bbq') || caterer.cuisine.toLowerCase().includes('braai');
+    if (activeCategory === 'braai') return matchesSearch && (caterer.cuisine.toLowerCase().includes('bbq') || caterer.cuisine.toLowerCase().includes('braai'));
     
     return matchesSearch;
   });

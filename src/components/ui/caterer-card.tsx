@@ -8,6 +8,8 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 import { EHColors } from '@/constants/colors';
 import type { Caterer } from '@/constants/data';
+import { useCaterers } from '@/hooks/use-caterers';
+import { formatUSD } from '@/utils/money';
 
 interface CatererCardProps {
   caterer: Caterer;
@@ -15,9 +17,11 @@ interface CatererCardProps {
   variant?: 'compact' | 'full';
 }
 
-export function CatererCard({ caterer, onPress, variant = 'compact' }: CatererCardProps) {
+export function CatererCard({ caterer: original, onPress, variant = 'compact' }: CatererCardProps) {
+  const caterers = useCaterers();
+  const caterer = caterers.find(item => item.id === original.id) ?? original;
   const isFull = variant === 'full';
-  const priceText = `$${caterer.lo}–${caterer.hi}`;
+  const priceText = `${formatUSD(caterer.lo)}–${formatUSD(caterer.hi)}`;
   const ratingText = isFull ? caterer.rating.toString() : `${caterer.rating} (${caterer.reviews})`;
 
   return (

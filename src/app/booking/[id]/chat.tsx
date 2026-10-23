@@ -5,30 +5,22 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
 
 import { EHColors } from '@/constants/colors';
-
-// Mock messages
-const INITIAL_MESSAGES = [
-  { id: '1', text: 'Hi! I saw your request for the 14th of Dec. Yes, we can do 220 guests. Do you need plates and cutlery included?', sender: 'caterer', time: '10:42 AM' },
-  { id: '2', text: 'That would be great. How much extra is it for the equipment?', sender: 'me', time: '10:45 AM' },
-  { id: '3', text: 'I can add it for $1.50 per head. I will send a quote over now so you can review.', sender: 'caterer', time: '10:50 AM' },
-];
+import { useBooking } from '@/hooks/use-booking';
+import { useAuth } from '@/context/AuthContext';
+import { useBookingsStore } from '@/store/useBookingsStore';
+import { EmptyState } from '@/components/ui/screen';
 
 export default function ChatScreen() {
   const insets = useSafeAreaInsets();
+  const booking = useBooking();
+  const { role } = useAuth();
+  const sendMessage = useBookingsStore(state => state.sendMessage);
   
-  const [messages, setMessages] = useState(INITIAL_MESSAGES);
   const [inputText, setInputText] = useState('');
   const scrollViewRef = useRef<ScrollView>(null);
 
   const handleSend = () => {
-    if (!inputText.trim()) return;
-    
-    setMessages([...messages, {
-      id: Date.now().toString(),
-      text: inputText.trim(),
-      sender: 'me',
-      time: 'Just now'
-    }]);
+    if (!booking || !sendMessage(booking.id, role, inputText)) return;
     setInputText('');
     
     setTimeout(() => {
@@ -43,10 +35,11 @@ export default function ChatScreen() {
     >
       <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
         <View style={styles.headerContent}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Go back"
+            onPress={() => router.canGoBack() ? router.back() : router.replace(role === 'caterer' ? '/vendor' : '/(tabs)/bookings')} style={styles.backBtn}>
             <Feather name="arrow-left" size={20} color={EHColors.ink} />
           </Pressable>
-          <Text style={styles.headerTitle}>Chat</Text>
+          <Text style={styles.headerTitle}>Chat · {role === 'caterer' ? booking?.organiserName : booking?.catererName}</Text>
           <View style={{ width: 40 }} />
         </View>
       </View>
@@ -57,15 +50,16 @@ export default function ChatScreen() {
         contentContainerStyle={styles.messagesContent}
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
       >
-        {messages.map((m) => {
-          const isMe = m.sender === 'me';
+        {!booking && <EmptyState title="Booking not found" />}
+        {booking?.messages.map((m) => {
+          const isMe = m.sender === role;
           return (
             <View key={m.id} style={[styles.messageBubble, isMe ? styles.bubbleMe : styles.bubbleThem]}>
               <Text style={[styles.messageText, isMe ? styles.messageTextMe : styles.messageTextThem]}>
                 {m.text}
               </Text>
               <Text style={[styles.messageTime, isMe ? styles.messageTimeMe : styles.messageTimeThem]}>
-                {m.time}
+                {m.sender === 'caterer' ? 'Caterer' : 'Organiser'} · {new Date(m.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </Text>
             </View>
           );
@@ -76,6 +70,7 @@ export default function ChatScreen() {
         <TextInput
           style={styles.input}
           placeholder="Tap to send a reply..."
+          accessibilityLabel="Chat message"
           placeholderTextColor={EHColors.inkPlaceholder}
           value={inputText}
           onChangeText={setInputText}
@@ -84,7 +79,9 @@ export default function ChatScreen() {
         <Pressable 
           style={[styles.sendBtn, !inputText.trim() && styles.sendBtnDisabled]} 
           onPress={handleSend}
-          disabled={!inputText.trim()}
+          accessibilityRole="button"
+          accessibilityLabel="Send message"
+          disabled={!booking || !inputText.trim()}
         >
           <Feather name="arrow-up" size={20} color={EHColors.white} />
         </Pressable>

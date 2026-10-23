@@ -1,123 +1,35 @@
-import {  Pressable, StyleSheet, Text, View , Platform } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Feather from '@expo/vector-icons/Feather';
+import { useState } from 'react';
+import { router } from 'expo-router';
+import { Text } from 'react-native';
 
-import { EHColors } from '@/constants/colors';
-import { EscrowIcon } from '@/components/ui/escrow-icon';
-import { CATERERS } from '@/constants/data';
+import { BookingSummary } from '@/components/booking/booking-summary';
+import { Button, EmptyState, Screen, ui } from '@/components/ui/screen';
+import { useBooking } from '@/hooks/use-booking';
+import { useAuth } from '@/context/AuthContext';
+import { useBookingsStore } from '@/store/useBookingsStore';
+import { formatUSD } from '@/utils/money';
 
 export default function ConfirmDeliveryScreen() {
-  const { id } = useLocalSearchParams();
-  const insets = useSafeAreaInsets();
-  
-  // Mock data fetching
-  const caterer = CATERERS.find(c => c.id === id) || CATERERS[0];
-  const deposit = '$1,089';
-
-  const handleConfirm = () => {
-    router.push(`/booking/${id}/rate` as any);
-  };
-
-  const handleDispute = () => {
-    router.push(`/booking/${id}/dispute` as any);
-  };
-
-  return (
-    <View style={[styles.root, { paddingBottom: insets.bottom }]}>
-      <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
-        <View style={styles.headerContent}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <Feather name="arrow-left" size={20} color={EHColors.ink} />
-          </Pressable>
-          <Text style={styles.headerTitle}>Event Day</Text>
-          <View style={{ width: 40 }} />
-        </View>
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.escrowCard}>
-          <View style={styles.escrowHeader}>
-            <EscrowIcon size="medium" />
-            <View style={styles.escrowTag}>
-              <Text style={styles.escrowTagText}>HELD IN ESCROW</Text>
-            </View>
-          </View>
-          <Text style={styles.escrowAmount}>{deposit}</Text>
-        </View>
-
-        <Text style={styles.title}>Did everything go as agreed?</Text>
-        <Text style={styles.message}>
-          <Text style={styles.bold}>{caterer.name}</Text> marked the event as delivered. Confirm and we release the escrow &mdash; or raise a dispute and it stays locked.
-        </Text>
-
-        <View style={styles.actions}>
-          <Pressable style={styles.btnPrimary} onPress={handleConfirm}>
-            <Text style={styles.btnPrimaryText}>Confirm delivery</Text>
-            <Feather name="check" size={18} color={EHColors.white} />
-          </Pressable>
-          
-          <Pressable style={styles.btnDanger} onPress={handleDispute}>
-            <Text style={styles.btnDangerText}>Raise a dispute</Text>
-            <Feather name="alert-triangle" size={18} color={EHColors.red} />
-          </Pressable>
-        </View>
-      </View>
-    </View>
-  );
+  const booking = useBooking();
+  const { role } = useAuth();
+  const confirmDelivery = useBookingsStore(state => state.confirmDelivery);
+  const [error, setError] = useState('');
+  return <Screen title="Event Day" back="/(tabs)/bookings">
+    {booking && role === 'organiser' ? <>
+      <BookingSummary booking={booking} />
+      <Text style={ui.title}>{booking.status === 'delivered' ? 'Did everything go as agreed?' : 'Waiting for delivery'}</Text>
+      <Text style={ui.body}>{booking.status === 'delivered'
+        ? `${booking.catererName} marked the event delivered. Confirm to release the ${formatUSD(booking.quote?.deposit ?? 0)} deposit to their demo wallet.`
+        : 'The caterer must mark this booking delivered before you can confirm. Your deposit stays locked.'}</Text>
+      {!!error && <Text style={ui.error}>{error}</Text>}
+      <Button label="Confirm delivery" variant="copper" disabled={booking.status !== 'delivered'}
+        onPress={() => {
+          if (!confirmDelivery(booking.id)) { setError('This booking can no longer be confirmed.'); return; }
+          router.replace({ pathname: '/booking/[id]/rate', params: { id: booking.id } });
+        }} />
+      <Button label="Raise a dispute" variant="danger" disabled={!['deposit_paid', 'delivered'].includes(booking.status)}
+        onPress={() => router.push({ pathname: '/booking/[id]/dispute', params: { id: booking.id } })} />
+      <Text style={ui.muted}>Mock escrow only. Confirming releases the deposit; it does not settle the remaining balance.</Text>
+    </> : <EmptyState title="Delivery confirmation unavailable" />}
+  </Screen>;
 }
-
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: EHColors.pageBg },
-  headerContainer: {
-    backgroundColor: EHColors.white,
-    borderBottomWidth: 1, borderBottomColor: EHColors.navyBorderLight,
-    paddingBottom: 12,
-    ...Platform.select({
-      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 8 },
-      android: { elevation: 4 }
-    }),
-    zIndex: 10,
-  },
-  headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 12 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: EHColors.pageBg, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: EHColors.ink },
-  
-  
-  
-  content: { padding: 24, flex: 1 },
-  escrowCard: {
-    backgroundColor: EHColors.white,
-    padding: 24,
-    borderRadius: 16,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: EHColors.copperBorderLight,
-    marginBottom: 32,
-  },
-  escrowHeader: { alignItems: 'center', marginBottom: 12 },
-  escrowTag: {
-    backgroundColor: EHColors.copperBg,
-    paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6,
-    marginTop: 8,
-  },
-  escrowTagText: { color: EHColors.copperDark, fontSize: 11, fontWeight: '700' },
-  escrowAmount: { fontSize: 32, fontWeight: '700', color: EHColors.ink },
-  title: { fontSize: 24, fontWeight: '600', color: EHColors.ink, marginBottom: 12, textAlign: 'center' },
-  message: { fontSize: 15, color: EHColors.inkSecondary, lineHeight: 22, textAlign: 'center', marginBottom: 40 },
-  bold: { fontWeight: '600', color: EHColors.ink },
-  actions: { gap: 12 },
-  btnPrimary: {
-    backgroundColor: EHColors.green,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    paddingVertical: 14, borderRadius: 12, gap: 8,
-  },
-  btnPrimaryText: { color: EHColors.white, fontSize: 16, fontWeight: '600' },
-  btnDanger: {
-    backgroundColor: EHColors.redBg,
-    borderWidth: 1, borderColor: EHColors.redBorder,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    paddingVertical: 14, borderRadius: 12, gap: 8,
-  },
-  btnDangerText: { color: EHColors.red, fontSize: 16, fontWeight: '600' },
-});

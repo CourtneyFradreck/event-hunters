@@ -4,13 +4,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
 
 import { EHColors } from '@/constants/colors';
-import { CATERERS } from '@/constants/data';
+import { useCaterers } from '@/hooks/use-caterers';
+import { formatUSD } from '@/utils/money';
 
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 export default function CatererProfileScreen() {
   const { id } = useLocalSearchParams();
-  const caterer = CATERERS.find((c) => c.id === id) || CATERERS[0];
+  const caterers = useCaterers();
+  const caterer = caterers.find((c) => c.id === id) || caterers[0];
   const insets = useSafeAreaInsets();
 
   const handleGoBack = () => {
@@ -93,7 +95,7 @@ export default function CatererProfileScreen() {
             <View style={{ flex: 1 }}>
               <Text style={styles.escrowTitle}>Escrow Protected</Text>
               <Text style={styles.escrowText}>
-                Your deposit sits securely with EventHunters until 48h after your event.
+                Your demo deposit stays locked until you confirm delivery.
               </Text>
             </View>
           </View>
@@ -173,12 +175,12 @@ export default function CatererProfileScreen() {
       <View style={[styles.bottomBar, { paddingBottom: insets.bottom || 24 }]}>
         <View style={styles.bottomBarContent}>
           <View style={styles.priceCol}>
-            <Text style={styles.priceValue}>${caterer.lo} - ${caterer.hi}</Text>
+            <Text style={styles.priceValue}>{formatUSD(caterer.lo)} – {formatUSD(caterer.hi)}</Text>
             <Text style={styles.priceLabel}>per head</Text>
           </View>
           <Pressable 
             style={styles.quoteBtn}
-            onPress={() => router.push(`/caterer/${id}/book` as any)}
+            onPress={() => router.push({ pathname: '/caterer/[id]/quote', params: { id: caterer.id } })}
           >
             <Text style={styles.quoteBtnText}>Request Quote</Text>
           </Pressable>

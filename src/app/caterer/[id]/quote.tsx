@@ -5,8 +5,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
 
 import { EHColors } from '@/constants/colors';
-import { CATERERS, EVENT_TYPES, SUBURBS, DATES, type EventType, type Suburb } from '@/constants/data';
+import { EVENT_TYPES, SUBURBS, DATES, type EventType, type Suburb } from '@/constants/data';
 import { logger } from '@/utils/logger';
+import { useBookingsStore } from '@/store/useBookingsStore';
+import { useCaterers } from '@/hooks/use-caterers';
 
 const SERVICE_MODELS = ['Drop-off', 'Chef-only', 'Full-service'];
 const BUDGETS = ['< $2k', '$2k – $3k', '$3k – $4k', '$4k+'];
@@ -15,7 +17,9 @@ const BUDGETS = ['< $2k', '$2k – $3k', '$3k – $4k', '$4k+'];
 
 export default function QuoteRequestScreen() {
   const { id } = useLocalSearchParams();
-  const caterer = CATERERS.find((c) => c.id === id) || CATERERS[0];
+  const caterers = useCaterers();
+  const caterer = caterers.find((c) => c.id === id) || caterers[0];
+  const requestQuote = useBookingsStore(state => state.requestQuote);
   const insets = useSafeAreaInsets();
 
   // Mock state
@@ -26,6 +30,8 @@ export default function QuoteRequestScreen() {
   const [service, setService] = useState('Full-service');
   const [dietary, setDietary] = useState('12 vegetarian, 4 halal, no pork at the main buffet.');
   const [budget, setBudget] = useState('$3k – $4k');
+  const [venue, setVenue] = useState('Borrowdale event venue');
+  const [error, setError] = useState('');
 
   const date = DATES[dateIdx];
 
@@ -43,7 +49,10 @@ export default function QuoteRequestScreen() {
       service,
       budget,
     });
-    router.push(`/caterer/${caterer.id}/sent` as any);
+    const bookingId = requestQuote(caterer.id, { eventType, guests, date, suburb, venue,
+      service, notes: `${dietary}\nBudget: ${budget}` });
+    if (!bookingId) { setError('Please add a venue before sending your brief.'); return; }
+    router.push({ pathname: '/caterer/[id]/sent', params: { id: caterer.id, bookingId } });
   };
 
 
@@ -64,7 +73,7 @@ export default function QuoteRequestScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.introText}>
-          One brief goes to {caterer.name} and 3 comparable caterers in {suburb}.
+          Send your event brief to {caterer.name} in {suburb}. Their reply will appear in your bookings.
         </Text>
 
         <View style={styles.formCard}>
@@ -95,6 +104,8 @@ export default function QuoteRequestScreen() {
 
           <Text style={[styles.fieldLabel, { marginTop: 16 }]}>VENUE SUBURB</Text>
           <ChipList items={SUBURBS} selected={suburb} onSelect={setSuburb} />
+          <Text style={[styles.fieldLabel, { marginTop: 16 }]}>VENUE NAME / ADDRESS</Text>
+          <TextInput accessibilityLabel="Venue" style={styles.textInput} value={venue} onChangeText={setVenue} />
 
           <Text style={[styles.fieldLabel, { marginTop: 16 }]}>SERVICE MODEL</Text>
           <ChipList items={SERVICE_MODELS} selected={service} onSelect={setService} />
@@ -113,11 +124,12 @@ export default function QuoteRequestScreen() {
           <ChipList items={BUDGETS} selected={budget} onSelect={setBudget} />
         </View>
 
+        {!!error && <Text style={{ color: EHColors.red, margin: 18 }}>{error}</Text>}
         <Pressable
           onPress={handleSendBrief}
           style={({ pressed }) => [styles.submitBtn, pressed && styles.submitBtnPressed]}
         >
-          <Text style={styles.submitBtnText}>Send to 4 caterers</Text>
+          <Text style={styles.submitBtnText}>Send quote request</Text>
         </Pressable>
         <Text style={styles.footerNote}>Free · no card needed to request quotes</Text>
       </ScrollView>

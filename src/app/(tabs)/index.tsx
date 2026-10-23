@@ -21,6 +21,8 @@ import {
   POPULAR_CATERER_IDS,
 } from '@/constants/data';
 import { logger } from '@/utils/logger';
+import { useBookingsStore } from '@/store/useBookingsStore';
+import { formatUSD } from '@/utils/money';
 
 const POPULAR = POPULAR_CATERER_IDS.map(
   (id) => CATERERS.find((c) => c.id === id)!,
@@ -34,6 +36,9 @@ const EVENT_TYPES = [
 ];
 
 export default function HomeScreen() {
+  const bookings = useBookingsStore(state => state.bookings);
+  const held = bookings.filter(booking => ['deposit_paid', 'delivered', 'disputed'].includes(booking.status))
+    .reduce((sum, booking) => sum + (booking.quote?.deposit ?? 0), 0);
   const [eventType, setEventType] = useState('Wedding');
   const [guests, setGuests] = useState(220);
   const [dateIdx, setDateIdx] = useState(0);
@@ -126,8 +131,8 @@ export default function HomeScreen() {
               <Feather name="shield" size={18} color={EHColors.green} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.escrowBannerTitle}>Escrow Active</Text>
-              <Text style={styles.escrowBannerText}>$1,089 secured for your Wedding</Text>
+              <Text style={styles.escrowBannerTitle}>{held ? 'Escrow Active' : 'Your bookings'}</Text>
+              <Text style={styles.escrowBannerText}>{formatUSD(held)} in mock escrow</Text>
             </View>
             <Pressable onPress={() => router.push('/(tabs)/bookings')} style={styles.escrowViewBtn}>
               <Text style={styles.escrowViewText}>View</Text>
