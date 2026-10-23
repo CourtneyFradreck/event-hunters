@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { logger } from '@/utils/logger';
 
 type Role = 'organiser' | 'caterer';
 
@@ -7,6 +8,7 @@ interface AuthContextType {
   role: Role;
   login: (role?: Role) => void;
   logout: () => void;
+  switchRole: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,8 +26,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAuthenticated(false);
   };
 
+  const switchRole = () => {
+    if (!__DEV__ || !isAuthenticated) return;
+    const next = role === 'organiser' ? 'caterer' : 'organiser';
+    setRole(next);
+    logger.trackEvent('Demo Role Switched', { from: role, to: next });
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, role, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, role, login, logout, switchRole }}>
       {children}
     </AuthContext.Provider>
   );

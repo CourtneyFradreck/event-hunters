@@ -4,6 +4,7 @@ import { Text } from 'react-native';
 import { Button, Screen, ui } from '@/components/ui/screen';
 import { DashboardCard } from '@/components/vendor/dashboard-card';
 import { ComplianceSummary } from '@/components/vendor/compliance-summary';
+import { RoleSwitch } from '@/components/ui/role-switch';
 import { useAuth } from '@/context/AuthContext';
 import { useBookingsStore } from '@/store/useBookingsStore';
 
@@ -17,6 +18,7 @@ export default function VendorAccountScreen() {
     </DashboardCard>
     <Button label="Edit business details" variant="secondary" onPress={() => router.push('/vendor/profile/edit')} />
     <ComplianceSummary />
+    <RoleSwitch />
     <Button label="Compliance Vault" variant="secondary" onPress={() => router.push('/account/compliance')} />
     <Button label="Log Out" variant="danger" onPress={logout} />
   </Screen>;

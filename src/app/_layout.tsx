@@ -12,7 +12,7 @@ function RootLayoutNav() {
   useEffect(() => {
     const inAuth = segments[0] === 'auth';
     const inWrongDashboard = role === 'caterer'
-      ? segments[0] === '(tabs)'
+      ? segments[0] === '(tabs)' || segments[0] === 'caterer'
       : segments[0] === 'vendor';
 
     if (!isAuthenticated && !inAuth) {

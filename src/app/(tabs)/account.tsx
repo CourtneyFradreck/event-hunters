@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 
 import { EHColors } from '@/constants/colors';
 import { useAuth } from '@/context/AuthContext';
+import { RoleSwitch } from '@/components/ui/role-switch';
 
 export default function AccountScreen() {
   const insets = useSafeAreaInsets();
@@ -102,6 +103,7 @@ export default function AccountScreen() {
         </View>
 
         {/* LOGOUT */}
+        <RoleSwitch />
         <Pressable style={styles.logoutBtn} onPress={handleLogout}>
           <Feather name="log-out" size={18} color={EHColors.red} />
           <Text style={styles.logoutText}>Log Out</Text>
