@@ -6,10 +6,9 @@
  */
 
 import { Tabs } from 'expo-router';
-import { StyleSheet } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 
-import { EHColors } from '@/constants/colors';
+import { tabScreenOptions } from '@/constants/tab-bar';
 import { logger } from '@/utils/logger';
 
 export default function TabLayout() {
@@ -17,13 +16,7 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: EHColors.copper,
-        tabBarInactiveTintColor: EHColors.inkPlaceholder,
-        tabBarStyle: styles.tabBar,
-        tabBarLabelStyle: styles.tabBarLabel,
-      }}
+      screenOptions={tabScreenOptions}
     >
       <Tabs.Screen
         name="index"
@@ -56,17 +49,3 @@ export default function TabLayout() {
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: EHColors.pageBg,
-    borderTopWidth: 1,
-    borderTopColor: EHColors.navyBorder,
-    paddingTop: 4,
-  },
-  tabBarLabel: {
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 0.1,
-  },
-});
