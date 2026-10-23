@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: EHColors.pageBg },
   scroll: { flex: 1 },
   
-  heroArea: { height: 260, width: '100%' },
+  heroArea: { height: 260, width: '100%', overflow: 'hidden' },
   heroOverlay: { ...StyleSheet.absoluteFill as object, backgroundColor: 'rgba(0,0,0,0.1)' },
   backBtn: {
     position: 'absolute', left: 20,
