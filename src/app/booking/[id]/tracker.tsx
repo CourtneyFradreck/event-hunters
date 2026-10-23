@@ -25,6 +25,7 @@ export default function BookingTrackerScreen() {
       {role === 'organiser' && booking.status === 'completed' &&
         <Button label={booking.rating ? 'Update rating' : 'Rate caterer'} onPress={() => router.push({ pathname: '/booking/[id]/rate', params: { id: booking.id } })} />}
       <Button label="Open chat" variant="secondary" onPress={() => router.push({ pathname: '/booking/[id]/chat', params: { id: booking.id } })} />
+      <Button label="My bookings" variant="secondary" onPress={() => router.replace(role === 'caterer' ? '/vendor/bookings' : '/(tabs)/bookings')} />
     </> : <EmptyState title="Booking not found" />}
   </Screen>;
 }
