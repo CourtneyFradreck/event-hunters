@@ -32,7 +32,9 @@ function RootLayoutNav() {
       >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="vendor/index" />
-        <Stack.Screen name="auth" />
+        <Stack.Screen name="auth/welcome" />
+        <Stack.Screen name="auth/login" />
+        <Stack.Screen name="auth/register" />
         <Stack.Screen name="+not-found" />
       </Stack>
     </>

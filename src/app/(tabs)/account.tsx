@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, View, Image, Platform } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
 import { router } from 'expo-router';

@@ -5,7 +5,6 @@ import Feather from '@expo/vector-icons/Feather';
 
 import { EHColors } from '@/constants/colors';
 import { CATERERS } from '@/constants/data';
-import { EscrowIcon } from '@/components/ui/escrow-icon';
 
 import Animated, { FadeInDown } from 'react-native-reanimated';
 

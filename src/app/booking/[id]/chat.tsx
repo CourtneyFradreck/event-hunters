@@ -1,11 +1,10 @@
 import { useState, useRef } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
 
 import { EHColors } from '@/constants/colors';
-import { CATERERS } from '@/constants/data';
 
 // Mock messages
 const INITIAL_MESSAGES = [
@@ -15,9 +14,7 @@ const INITIAL_MESSAGES = [
 ];
 
 export default function ChatScreen() {
-  const { id } = useLocalSearchParams();
   const insets = useSafeAreaInsets();
-  const caterer = CATERERS.find(c => c.id === id) || CATERERS[0];
   
   const [messages, setMessages] = useState(INITIAL_MESSAGES);
   const [inputText, setInputText] = useState('');

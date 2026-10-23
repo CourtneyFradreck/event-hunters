@@ -8,7 +8,7 @@ type LogMeta = Record<string, unknown>;
 
 class Logger {
   private prefix = '[EventHunters]';
-  private logs: Array<{ level: LogLevel; message: string; meta?: LogMeta; timestamp: Date }> = [];
+  private logs: { level: LogLevel; message: string; meta?: LogMeta; timestamp: Date }[] = [];
 
   private formatMeta(meta?: LogMeta): string {
     if (!meta || Object.keys(meta).length === 0) return '';
